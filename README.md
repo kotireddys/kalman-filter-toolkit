@@ -5,29 +5,29 @@
 **The empirical claim, and its scope.** On a fast, multi-axis IMU trajectory with
 intermittent GNSS position fixes (100 Monte Carlo runs, byte-identical sensor
 streams across estimators), a standard EKF suffers a severe *transient* consistency
-failure — ANEES (ideal value: state dimension, 15) spikes to several thousand for
+failure - ANEES (ideal value: state dimension, 15) spikes to several thousand for
 several seconds around a period of high excitation, meaning its reported covariance
 is wildly overconfident right when it matters most. InEKF holds up substantially
-better through that same window (median ANEES 170 vs. 213–302 for EKF/FEJ-EKF over
+better through that same window (median ANEES 170 vs. 213-302 for EKF/FEJ-EKF over
 the full run, [`results/aggressive/summary.md`](results/aggressive/summary.md)),
 consistent with its structurally exact log-linear error dynamics degrading
 gracefully rather than catastrophically once biases are estimated (see
 [`docs/inekf.md`](docs/inekf.md)). Two things this figure does *not* claim, stated
 plainly rather than smoothed over: this repo's pre-existing ESKF achieves the best
-calibration of all four here (median ANEES ~14, closest to ideal) — plausibly
+calibration of all four here (median ANEES ~14, closest to ideal) - plausibly
 because its noise model is the most maturely tuned of the four adapters, not
 necessarily because its error-state formulation is structurally superior, since the
 generic EKF/FEJ-EKF and InEKF noise models built for this benchmark are explicitly
 simpler constructions (see `benchmark/estimators.py`); and FEJ-EKF's benefit over
 plain EKF shows up clearly at the worst *instant* (its peak spike is roughly 6× 
-smaller — see the figure) but not uniformly in the whole-run-averaged median
+smaller - see the figure) but not uniformly in the whole-run-averaged median
 statistic, where it is occasionally slightly worse. Both nuances are real Monte
 Carlo output, not cherry-picked. Reproduce this figure and every other one with
 `python -m benchmark.generate_all`.
 
 Kalman Filter Toolkit is a compact, test-driven repository for state estimation,
 noise modeling, and filter health checks. It is designed around a simple rule: the
-filter is not done until the noise model and diagnostics exist alongside it — and,
+filter is not done until the noise model and diagnostics exist alongside it - and,
 now, until its consistency has been checked against the others, not just against
 itself.
 
@@ -39,14 +39,14 @@ itself.
   covariance health repair utilities.
 - A reproducible Monte Carlo benchmark harness (`benchmark/`) runs every kernel on
   byte-identical simulated sensor streams and reports ANEES/ANIS with χ² bounds,
-  ATE/RTE, divergence rate, and runtime — median and IQR across ≥100 runs, never a
+  ATE/RTE, divergence rate, and runtime - median and IQR across ≥100 runs, never a
   single representative run.
 - Case studies are scoped to real estimation problems so each filter earns its
   place.
 
 ## Kernel taxonomy
 
-The eight kernels aren't a flat list — they differ along independent axes. InEKF
+The eight kernels aren't a flat list - they differ along independent axes. InEKF
 and FEJ-EKF exist specifically to fill the **state-space geometry** and
 **consistency handling** cells that the original six left empty.
 
@@ -62,7 +62,7 @@ and FEJ-EKF exist specifically to fill the **state-space geometry** and
 | [`InEKF`](filters/inekf.py) | exact log-linear (group-affine) | matrix Lie group SE₂(3) | structurally exact (bias-free); degrades gracefully with bias | fixed | standard covariance |
 
 See [`docs/inekf.md`](docs/inekf.md) and [`docs/fej_ekf.md`](docs/fej_ekf.md) for
-the actual derivations behind the geometry and consistency columns — group-affine
+the actual derivations behind the geometry and consistency columns - group-affine
 condition, error dynamics, why the measurement Jacobian is constant under the
 matched error convention, and the observability argument, with equations.
 
@@ -100,11 +100,11 @@ print(kf.x)
 
 `benchmark/` runs EKF, FEJ-EKF, ESKF, and InEKF on identical IMU + GNSS sensor
 streams (same trajectory, same noise realization, same initial-error draw per
-run — asserted directly in `tests/test_benchmark_harness.py`) and reports:
+run - asserted directly in `tests/test_benchmark_harness.py`) and reports:
 
 - **ANEES / ANIS vs. time**, with χ² confidence bounds at the correct degrees of
   freedom for N runs × state dimension, plotted as a shaded band.
-- **ATE / RTE**, reported separately for attitude, velocity, position — median and
+- **ATE / RTE**, reported separately for attitude, velocity, position - median and
   IQR across runs, never mean-only and never a single run.
 - **Divergence rate**, against a threshold declared in the config up front.
 - **Runtime per update**, mean and p95 tail.
@@ -117,7 +117,7 @@ python -m benchmark.generate_all
 
 Results land in `results/<config_name>/` (figures + `summary.csv`/`summary.md`) and
 `results/ablations/`. Raw per-run data is cached under `results/cache/`, keyed on a
-hash of the full config, so re-plotting doesn't require re-simulating — delete that
+hash of the full config, so re-plotting doesn't require re-simulating - delete that
 directory to force a clean re-run (necessary after changing any filter's code, since
 the cache key doesn't know about code changes, only config changes).
 
@@ -140,12 +140,12 @@ degrade similarly up to about 90° of initial yaw error on this 10s aggressive-
 trajectory, GNSS-only-position-update config, and converge toward similarly large
 attitude error by 180° (a position-only measurement doesn't fully resolve attitude
 information fast enough on this short a window to rescue any of them from a
-near-antipodal start). FEJ-EKF is visibly *worse* than the others in the 90–120°
-range — its frozen linearization point, if that first estimate happens to be badly
+near-antipodal start). FEJ-EKF is visibly *worse* than the others in the 90-120°
+range - its frozen linearization point, if that first estimate happens to be badly
 wrong, stays wrong for longer than a standard EKF's continuously-updated one; this
 is a real, known trade-off of FEJ (consistency vs. adaptivity to a bad start), not
 a bug. The init-error and IMU-noise ablations (`results/ablations/`), by contrast,
-show near-identical curves across all four kernels — expected, since pure
+show near-identical curves across all four kernels - expected, since pure
 position/velocity ATE under gentle excitation doesn't exercise the attitude-geometry
 differences these kernels exist to address; the interesting differentiator in this
 repo's results is filter *consistency* (ANEES), not raw accuracy.
@@ -164,7 +164,7 @@ repo's results is filter *consistency* (ANEES), not raw accuracy.
 
 1. The filter does not exist until the case study needs it.
 2. Noise modeling is not an afterthought.
-3. Diagnostics are mandatory — and consistency is checked across kernels on
+3. Diagnostics are mandatory - and consistency is checked across kernels on
    identical data, not just within one kernel on its own run.
 4. Real data should be used wherever possible.
 5. A structural claim (log-linearity, observability, a Jacobian's constancy) is
@@ -174,5 +174,5 @@ repo's results is filter *consistency* (ANEES), not raw accuracy.
 
 Foundational references include Bar-Shalom, Solà, Barfoot, Särkkä, Mehra,
 Sage-Husa, Wan-Merwe, Van Loan, Trawny-Roumeliotis, IEEE 647-2006, Barrau &
-Bonnabel, Hartley et al., Huang-Mourikis-Roumeliotis, and Hesch et al. — see
+Bonnabel, Hartley et al., Huang-Mourikis-Roumeliotis, and Hesch et al. - see
 [`docs/references.bib`](docs/references.bib).
