@@ -1,0 +1,41 @@
+# Basin-of-attraction ablation: initial yaw error swept 0 -> 180 deg by
+# benchmark/ablations.py::run_yaw_sweep. This file is the BASE config; the
+# sweep script overrides init.yaw_error_deg per point (see that module for
+# the swept values) and reuses everything else below unchanged.
+name: ablation_yaw_sweep
+n_runs: 100
+seed: 0
+estimators: [ekf, fej_ekf, eskf, inekf]
+
+trajectory:
+  kind: aggressive
+  duration_s: 10.0
+  dt: 0.02
+  turn_rate_dps: 60.0
+  accel_amplitude: 4.0
+
+noise:
+  gyro_noise: 0.01
+  accel_noise: 0.1
+  gyro_bias_noise: 1.0e-5
+  accel_bias_noise: 1.0e-4
+  gyro_bias_init_std: 0.01
+  accel_bias_init_std: 0.05
+  gnss_noise_std: 0.5
+
+sensors:
+  gnss_rate_hz: 5.0
+  gnss_dropout_prob: 0.0
+  gnss_outage_windows: []
+
+init:
+  yaw_error_deg: 5.0  # overridden per sweep point
+  position_error_std: 0.5
+  velocity_error_std: 0.1
+  position_p0_std: 1.0
+  velocity_p0_std: 0.5
+  attitude_p0_std_deg: 5.0
+  bias_p0_std: 0.05
+
+divergence:
+  position_error_threshold_m: 50.0

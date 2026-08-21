@@ -26,6 +26,7 @@ dependencies = [
   "numpy>=1.24",
   "scipy>=1.10",
   "matplotlib>=3.7",
+  "pyyaml>=6.0",
 ]
 
 [project.optional-dependencies]
@@ -37,7 +38,7 @@ include-package-data = true
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["filters*", "noise*", "diagnostics*"]
+include = ["filters*", "noise*", "diagnostics*", "benchmark*"]
 
 [tool.ruff]
 line-length = 120

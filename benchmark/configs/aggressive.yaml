@@ -1,0 +1,39 @@
+# Same comparison on an aggressive (fast, multi-axis) trajectory -- richer
+# excitation, where FEJ-EKF/InEKF's consistency advantage should be most visible.
+name: aggressive
+n_runs: 100
+seed: 0
+estimators: [ekf, fej_ekf, eskf, inekf]
+
+trajectory:
+  kind: aggressive
+  duration_s: 20.0
+  dt: 0.02
+  turn_rate_dps: 60.0
+  accel_amplitude: 4.0
+
+noise:
+  gyro_noise: 0.01
+  accel_noise: 0.1
+  gyro_bias_noise: 1.0e-5
+  accel_bias_noise: 1.0e-4
+  gyro_bias_init_std: 0.01
+  accel_bias_init_std: 0.05
+  gnss_noise_std: 0.5
+
+sensors:
+  gnss_rate_hz: 5.0
+  gnss_dropout_prob: 0.0
+  gnss_outage_windows: []
+
+init:
+  yaw_error_deg: 5.0
+  position_error_std: 0.5
+  velocity_error_std: 0.1
+  position_p0_std: 1.0
+  velocity_p0_std: 0.5
+  attitude_p0_std_deg: 5.0
+  bias_p0_std: 0.05
+
+divergence:
+  position_error_threshold_m: 50.0

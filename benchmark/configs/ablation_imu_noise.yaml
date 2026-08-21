@@ -1,0 +1,40 @@
+# IMU noise scaling ablation: benchmark/ablations.py::run_imu_noise_sweep
+# scales BOTH noise.gyro_noise and noise.accel_noise together by a common
+# factor per sweep point.
+name: ablation_imu_noise
+n_runs: 100
+seed: 0
+estimators: [ekf, fej_ekf, eskf, inekf]
+
+trajectory:
+  kind: benign
+  duration_s: 10.0
+  dt: 0.02
+  turn_rate_dps: 10.0
+  accel_amplitude: 1.0
+
+noise:
+  gyro_noise: 0.01  # scaled per sweep point
+  accel_noise: 0.1  # scaled per sweep point
+  gyro_bias_noise: 1.0e-5
+  accel_bias_noise: 1.0e-4
+  gyro_bias_init_std: 0.01
+  accel_bias_init_std: 0.05
+  gnss_noise_std: 0.5
+
+sensors:
+  gnss_rate_hz: 5.0
+  gnss_dropout_prob: 0.0
+  gnss_outage_windows: []
+
+init:
+  yaw_error_deg: 5.0
+  position_error_std: 0.5
+  velocity_error_std: 0.1
+  position_p0_std: 1.0
+  velocity_p0_std: 0.5
+  attitude_p0_std_deg: 5.0
+  bias_p0_std: 0.05
+
+divergence:
+  position_error_threshold_m: 50.0

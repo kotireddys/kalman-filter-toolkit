@@ -1,6 +1,7 @@
 from .adaptive import SageHusaAdaptiveKF, mehra_adaptive_R
 from .ekf import ExtendedKalmanFilter
 from .eskf import ErrorStateKalmanFilter
+from .inekf import InvariantEKF
 from .kf import KalmanFilter
 from .sq_root import SquareRootKalmanFilter
 from .ukf import UnscentedKalmanFilter
@@ -13,4 +14,5 @@ __all__ = [
     "SquareRootKalmanFilter",
     "SageHusaAdaptiveKF",
     "mehra_adaptive_R",
+    "InvariantEKF",
 ]
